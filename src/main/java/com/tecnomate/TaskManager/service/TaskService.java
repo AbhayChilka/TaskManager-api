@@ -1,5 +1,6 @@
 package com.tecnomate.TaskManager.service;
 
+import com.tecnomate.TaskManager.ai.PriorityService;
 import com.tecnomate.TaskManager.model.Status;
 import com.tecnomate.TaskManager.model.Task;
 import com.tecnomate.TaskManager.repository.TaskRepository;
@@ -12,10 +13,12 @@ import java.util.Optional;
 public class TaskService
 {
     private final TaskRepository taskRepository;
+    private final PriorityService priorityService;
 
-    public TaskService(TaskRepository taskRepository)
+    public TaskService(TaskRepository taskRepository, PriorityService priorityService)
     {
         this.taskRepository = taskRepository;
+        this.priorityService = priorityService;
     }
 
     //create new task
@@ -25,6 +28,11 @@ public class TaskService
         {
             throw new RuntimeException("Title is required");
         }
+
+        var result = priorityService.suggest(task.getTitle(), task.getDescription());
+
+        task.setPriority(result.priority);
+        task.setPriorityReason(result.reason);
 
         task.setStatus(Status.PENDING);
 
@@ -46,4 +54,6 @@ public class TaskService
         task.setStatus(Status.COMPLETED);
         return taskRepository.save(task);
     }
+
+
 }
