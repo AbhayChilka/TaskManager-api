@@ -12,16 +12,27 @@ public class TaskRepository
     private final Map<Long, Task> store = new HashMap<>();
     private final AtomicLong idCounter = new AtomicLong(1);
 
+    //new
     public Task save(Task task)
     {
-        Long id = idCounter.getAndIncrement();
-        task.setId(id);
-        store.put(id, task);
+        if (task.getId() == null)
+        {
+            Long id = idCounter.getAndIncrement();
+            task.setId(id);
+        }
+        store.put(task.getId(), task);
         return task;
     }
 
+    //show
     public List<Task> findAll()
     {
         return new ArrayList<>(store.values());
+    }
+
+    //update status
+    public Optional<Task> findById(Long id)
+    {
+        return Optional.ofNullable(store.get(id));
     }
 }

@@ -10,7 +10,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/tasks")
-public class TaskController {
+public class TaskController
+{
 
     private final TaskService taskService;
 
@@ -19,7 +20,7 @@ public class TaskController {
         this.taskService = taskService;
     }
 
-    // POST - Create a task
+    // POST - Create a task json raw
     @PostMapping
     public ResponseEntity<Task> addTask(@RequestBody Task task)
     {
@@ -27,11 +28,18 @@ public class TaskController {
         return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
 
-    // GET - Get all tasks
+    // GET - Get all tasks list of all tasks
     @GetMapping
     public ResponseEntity<List<Task>> getAllTasks()
     {
         List<Task> tasks = taskService.getAllTasks();
         return new ResponseEntity<>(tasks, HttpStatus.OK);
+    }
+
+    //PATCH - update status need task/id number
+    @PatchMapping("/{id}")
+    public Task markComplete(@PathVariable Long id)
+    {
+        return taskService.markComplete(id);
     }
 }
